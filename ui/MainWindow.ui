@@ -32,7 +32,7 @@
      <x>0</x>
      <y>0</y>
      <width>850</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -69,7 +69,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QRadioButton" name="radioButton">
+        <widget class="QRadioButton" name="checkBoxA">
          <property name="maximumSize">
           <size>
            <width>50</width>
@@ -85,7 +85,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton_2">
+        <widget class="QRadioButton" name="checkBoxB">
          <property name="maximumSize">
           <size>
            <width>50</width>
@@ -105,7 +105,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QRadioButton" name="radioButton_3">
+        <widget class="QRadioButton" name="checkBoxC">
          <property name="maximumSize">
           <size>
            <width>50</width>
@@ -121,7 +121,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton_4">
+        <widget class="QRadioButton" name="checkBoxD">
          <property name="maximumSize">
           <size>
            <width>50</width>

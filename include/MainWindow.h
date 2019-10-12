@@ -17,6 +17,10 @@
 #include "ProjectSymbol.h"
 #include "ProjectStructure.h"
 
+#include "Network.h"
+
+#include <iostream>
+
 namespace Ui
 {
     class MainWindow;
@@ -53,12 +57,16 @@ private:
 
     void clearWorkArea();
 
+    void convertTable(float *data);
+
 private slots:
 
     void newRecognition();
     void openRecognition();
     void saveRecognition();
     void startRecognition();
+
+    void startLearning();
 
     void cleanPainter();
 
@@ -69,6 +77,8 @@ private slots:
     void selectItem( const QModelIndex &index );
 
 private:
+
+    Network *network;
 
     QLabel *labelStatus;
     QWidget *mainToolbarSpacer;

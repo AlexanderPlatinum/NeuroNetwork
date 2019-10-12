@@ -18,10 +18,14 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowIcon( QIcon( ":/images/word.png" ) );
 
     this->currentSelectedId = NO_SELECT;
+
+    network = new Network(IMAGE_WIDTH * IMAGE_HEIGHT);
 }
 
 MainWindow::~MainWindow()
-{
+{  
+    delete network;
+
     delete labelStatus;
     delete mainToolbarSpacer;
     delete mainToolbarStateGroup;
@@ -96,6 +100,8 @@ void MainWindow::setupToolbar()
 
     connect( actionCleanPainter, SIGNAL(triggered()), this, SLOT(cleanPainter()));
     connect( actionRecognition,  SIGNAL(triggered()), this, SLOT(startRecognition()));
+
+    connect(actionLearning, SIGNAL(triggered()), this, SLOT(startLearning()));
 }
 
 void MainWindow::setupStatusBar()
@@ -243,6 +249,31 @@ void MainWindow::saveRecognition()
 void MainWindow::startRecognition()
 {
     labelStatus->setText( "Идет распознание буквы..." );
+
+    float data[IMAGE_WIDTH * IMAGE_HEIGHT];
+
+    convertTable(data);
+
+    for (int i = 0; i < IMAGE_WIDTH * IMAGE_HEIGHT; i++) {
+        std::cout << data[i] << " ";
+    }
+
+    for (int i = 0; i < 4; i++) {
+        float result = network->Recognize(data, i);
+
+        std::cout << result << std::endl;
+
+        if (result > 0.5f) {
+
+            if(i == 0) ui->checkBoxA->setChecked(true);
+            if(i == 1) ui->checkBoxB->setChecked(true);
+            if(i == 2) ui->checkBoxC->setChecked(true);
+            if(i == 3) ui->checkBoxD->setChecked(true);
+
+            break;
+        }
+    }
+
 
     labelStatus->setText( "Распознание буквы закончено!" );
 }
@@ -397,4 +428,43 @@ void MainWindow::clearWorkArea()
     ui->itemNameEdit->setText("");
     ui->itemDescriptionEdit->setText("");
     ui->itemTypeComboBox->setCurrentIndex(0);
+}
+
+void MainWindow::convertTable(float *data) {
+    int counter = 0;
+    for (int i = 0; i < IMAGE_HEIGHT; i++) {
+        for (int j = 0; j < IMAGE_WIDTH; j++) {
+            data[counter] = static_cast<float>(isSelected[i][j]);
+            counter++;
+        }
+    }
+}
+
+void MainWindow::startLearning() {
+    labelStatus->setText( "Идет обучение нейронной сети ..." );
+
+    for (int i = 0; i < 4; i++) {
+
+        QList<ProjectSymbol>::iterator it;
+        for ( it = project.Symbols.begin(); it != project.Symbols.end(); ++it )
+        {
+            float resultNeed = (i == it->Type) ? 1.0f : 0.0f;
+
+            float data[IMAGE_WIDTH * IMAGE_HEIGHT];
+
+            int counter = 0;
+            for (int t = 0; t < IMAGE_HEIGHT; t++) {
+                for (int k = 0; k < IMAGE_WIDTH; k++) {
+                    data[counter] = static_cast<float>(it->Data[t][k]);
+                    counter++;
+                }
+            }
+
+
+            network->Teaching(data, i, resultNeed);
+        }
+
+    }
+
+    labelStatus->setText( "Обучение нейронной сети закончено ..." );
 }

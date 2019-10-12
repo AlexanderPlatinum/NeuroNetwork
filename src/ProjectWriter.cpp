@@ -1,4 +1,4 @@
-#include "projectwriter.h"
+#include "ProjectWriter.h"
 
 ProjectWriter::ProjectWriter( const QString &fileName )
 {

@@ -9,8 +9,7 @@ TEMPLATE = app
 SOURCES += ./src/main.cpp\
            ./src/MainWindow.cpp \
            ./src/ProjectWriter.cpp \
-           ./src/ProjectReader.cpp \
-           ./src/Network.cpp
+           ./src/ProjectReader.cpp
 
 HEADERS  += ./include/MainWindow.h \
             ./include/ProjectStructure.h \
