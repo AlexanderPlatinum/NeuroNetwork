@@ -254,25 +254,29 @@ void MainWindow::startRecognition()
 
     convertTable(data);
 
-    for (int i = 0; i < IMAGE_WIDTH * IMAGE_HEIGHT; i++) {
-        std::cout << data[i] << " ";
-    }
+    //for (int i = 0; i < IMAGE_WIDTH * IMAGE_HEIGHT; i++) {
+     //   std::cout << data[i] << " ";
+    //}
+
+    int idResult = 0;
+
+    float min = -1.0f;
 
     for (int i = 0; i < 4; i++) {
         float result = network->Recognize(data, i);
 
-        std::cout << result << std::endl;
+        //std::cout << result << std::endl;
 
-        if (result > 0.5f) {
-
-            if(i == 0) ui->checkBoxA->setChecked(true);
-            if(i == 1) ui->checkBoxB->setChecked(true);
-            if(i == 2) ui->checkBoxC->setChecked(true);
-            if(i == 3) ui->checkBoxD->setChecked(true);
-
-            break;
+        if (result > min) {
+            min = result;
+            idResult = i;
         }
     }
+
+    if(idResult == 0) ui->checkBoxA->setChecked(true);
+    if(idResult == 1) ui->checkBoxB->setChecked(true);
+    if(idResult == 2) ui->checkBoxC->setChecked(true);
+    if(idResult == 3) ui->checkBoxD->setChecked(true);
 
 
     labelStatus->setText( "Распознание буквы закончено!" );
@@ -443,27 +447,31 @@ void MainWindow::convertTable(float *data) {
 void MainWindow::startLearning() {
     labelStatus->setText( "Идет обучение нейронной сети ..." );
 
-    for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < 4; i++) {
 
-        QList<ProjectSymbol>::iterator it;
-        for ( it = project.Symbols.begin(); it != project.Symbols.end(); ++it )
-        {
-            float resultNeed = (i == it->Type) ? 1.0f : 0.0f;
+            QList<ProjectSymbol>::iterator it;
+            for ( it = project.Symbols.begin(); it != project.Symbols.end(); ++it )
+            {
+                float resultNeed = (i == it->Type) ? 1.0f : 0.0f;
 
-            float data[IMAGE_WIDTH * IMAGE_HEIGHT];
+                float data[IMAGE_WIDTH * IMAGE_HEIGHT];
 
-            int counter = 0;
-            for (int t = 0; t < IMAGE_HEIGHT; t++) {
-                for (int k = 0; k < IMAGE_WIDTH; k++) {
-                    data[counter] = static_cast<float>(it->Data[t][k]);
-                    counter++;
+                int counter = 0;
+                for (int t = 0; t < IMAGE_HEIGHT; t++) {
+                    for (int k = 0; k < IMAGE_WIDTH; k++) {
+                        data[counter] = static_cast<float>(it->Data[t][k]);
+                        counter++;
+                    }
                 }
+
+
+                network->Teaching(data, i, resultNeed);
+
+                //qDebug() << "Type := " << it->Type << "I := " << i << "need := " << resultNeed;
             }
 
-
-            network->Teaching(data, i, resultNeed);
         }
-
     }
 
     labelStatus->setText( "Обучение нейронной сети закончено ..." );

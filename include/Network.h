@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QDebug>
+#include <string.h>
 #include <cmath>
 
 class Network {
@@ -20,10 +22,11 @@ public:
     }
 
     void Teaching(float *data, int idSolution, float resultNeed) {
-        for (int i = 0; i < 20000; i++) {
+
+        for (int i = 0; i < 10000; i++) {
             float result = 0.0f;
 
-            for (int t = 0; t < 15; t++) {
+            for (int t = 0; t < width; t++) {
                 result += data[t] * synapticWeight[idSolution][t];
             }
 
@@ -31,7 +34,9 @@ public:
 
             float error = resultNeed - result;
 
-            for (int t = 0; t < 15; t++) {
+            //qDebug() << error;
+
+            for (int t = 0; t < width; t++) {
                 synapticWeight[idSolution][t] += data[t] * (error * (result * (1.0f - result)));
             }
         }
@@ -39,7 +44,7 @@ public:
 
     float Recognize(float *data, int idSolution) {
         float result = 0.0f;
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < width; i++) {
             result += data[i] * synapticWeight[idSolution][i];
         }
 
@@ -51,6 +56,8 @@ private:
     void allocateMemory() {
         for (int i = 0; i < 4; i++) {
             synapticWeight[i] = new float[width];
+
+            memset(synapticWeight[i], 0, sizeof(float) * width);
         }
     }
 
